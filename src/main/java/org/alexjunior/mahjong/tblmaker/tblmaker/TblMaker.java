@@ -8,10 +8,8 @@ import java.util.List;
 
 /**
  * 胡牌检测数据生成器
- * 
- * @company:闲徕互娱
- * @department 项目九部
- * @author 弦
+ *
+ * @author alexjunior
  * @date:2017年11月6日
  * @time:上午10:16:46
  * @description:
