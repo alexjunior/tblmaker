@@ -15,6 +15,12 @@ import java.util.List;
  * @description:
  */
 public class TblMaker {
+    
+    public static void main(String[] args) {
+        TblMaker maker = new TblMaker();
+        maker.make();
+    }
+    
     Seq[] s = { //
             new Seq(0, new int[] { 1, 1, 1 }), //
             // new Seq(1, new int[] { 1, 1 }), //
@@ -31,10 +37,20 @@ public class TblMaker {
             new Par(0, new int[] { 2 }), //
             // new Par(1, new int[] { 1 }) //
     };
+    
+    int maxJoker = 15;//最大混牌数 实际发生的混牌可能会小于此数值
+    HashMap<String, Tbm> tbms = new HashMap<>();
+    HashMap<String, Tbm> tbms_eyes = new HashMap<>();
 
     public void make() {
-        makeSuit();
-        // makeHonor();
+//        makeSuit();
+         makeHonor();
+         
+         /** 无将表统计 */
+         printTbl("tbms", tbms.values());
+
+        /** 带将表统计 */
+//        printTbl("tbms_eyes", tbms_eyes.values());
     }
 
     private void makeHonor() {
@@ -51,9 +67,9 @@ public class TblMaker {
 
     private void statistic(ArrayList<int[]> tbl) {
 
-        HashMap<String, Tbm> tbms = new HashMap<>();
+        tbms = new HashMap<>();
 
-        HashMap<String, Tbm> tbms_eyes = new HashMap<>();
+        tbms_eyes = new HashMap<>();
 
         System.out.println("table::" + tbl.size());
 
@@ -156,11 +172,11 @@ public class TblMaker {
         // System.out.println("===================================");
 
         /** 素表依次减混儿 */
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i <= maxJoker; i++) {
             HashMap<String, Tbm> ts = new HashMap<>();
             for (Tbm tbm : tbms.values()) {
                 for (int t = 0; t < tbm.ttt.length; t++) {
-                    if (tbm.ttt[t] == 0 || (tbm.joker + 1) > 7) {
+                    if (tbm.ttt[t] == 0 || (tbm.joker + 1) > maxJoker) {
                         continue;
                     }
                     int[] tt = new int[tbm.ttt.length];
@@ -186,11 +202,11 @@ public class TblMaker {
         }
 
         /** 素将表依次减混儿 */
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i <= maxJoker; i++) {
             HashMap<String, Tbm> ts = new HashMap<>();
             for (Tbm tbm : tbms_eyes.values()) {
                 for (int t = 0; t < tbm.ttt.length; t++) {
-                    if (tbm.ttt[t] == 0 || (tbm.joker + 1) > 7) {
+                    if (tbm.ttt[t] == 0 || (tbm.joker + 1) > maxJoker) {
                         continue;
                     }
                     int[] tt = new int[tbm.ttt.length];
@@ -218,12 +234,6 @@ public class TblMaker {
 
             tbms_eyes.putAll(ts);
         }
-
-        /** 无将表统计 */
-        // printTbl("tbms", tbms.values());
-
-        /** 带将表统计 */
-        printTbl("tbms_eyes", tbms_eyes.values());
     }
 
     private void printTbl(String name, Collection<Tbm> col) {
