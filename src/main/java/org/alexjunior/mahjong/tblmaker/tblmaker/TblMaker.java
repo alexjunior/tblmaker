@@ -1,4 +1,4 @@
-package org.alexjunior.mahjong.tblmaker.tblmaker;
+package com.gezeal.game.tabletop.mahjong.component.tbl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,16 +15,24 @@ import java.util.List;
  * @description:
  */
 public class TblMaker {
-    
+
     public static void main(String[] args) {
         TblMaker maker = new TblMaker();
         maker.make();
     }
-    
+
     Seq[] s = { //
+
             new Seq(0, new int[] { 1, 1, 1 }), //
-            // new Seq(1, new int[] { 1, 1 }), //
-            // new Seq(1, new int[] { 1, 0, 1 })//
+
+            // new Seq(0, new int[] { 1, 1, 1, 0 }), //东领头
+            // new Seq(0, new int[] { 1, 0, 1, 1 }), //东领头
+            // new Seq(0, new int[] { 1, 1, 0, 1 }), //东领头
+
+            // new Seq(0, new int[] { 1, 0, 0, 0, 1, 0, 0, 0, 1 }), // 159
+            // new Seq(0, new int[] { 1, 0, 0, 1, 0, 0, 1, 0, 0 }), // 147
+            // new Seq(0, new int[] { 0, 1, 0, 0, 1, 0, 0, 1, 0 }), // 258
+            // new Seq(0, new int[] { 0, 0, 1, 0, 0, 1, 0, 0, 1 }), // 369
     };
 
     Tri[] t = { //
@@ -37,20 +45,27 @@ public class TblMaker {
             new Par(0, new int[] { 2 }), //
             // new Par(1, new int[] { 1 }) //
     };
-    
-    int maxJoker = 15;//最大混牌数 实际发生的混牌可能会小于此数值
+
+    int maxJoker = 15;// 最大混牌数 实际发生的混牌可能会小于此数值
     HashMap<String, Tbm> tbms = new HashMap<>();
     HashMap<String, Tbm> tbms_eyes = new HashMap<>();
 
     public void make() {
-//        makeSuit();
-         makeHonor();
-         
-         /** 无将表统计 */
-         printTbl("tbms", tbms.values());
+        makeSuit();
+        // makeHonor();
+        // makeWind();
+
+        /** 无将表统计 */
+        // printTbl("tbms", tbms.values());
 
         /** 带将表统计 */
-//        printTbl("tbms_eyes", tbms_eyes.values());
+        printTbl("tbms_eyes", tbms_eyes.values());
+    }
+
+    private void makeWind() {
+        /** 原始表 */
+        ArrayList<int[]> tbl = getTable(4, 4, 4);
+        statistic(tbl);
     }
 
     private void makeHonor() {
@@ -241,9 +256,18 @@ public class TblMaker {
         Collections.sort(list);
 
         int[] count = new int[15];
+        int cnt = 0;
+        int setn = 1;
         for (Tbm tbm : list) {
             count[tbm.tile]++;
-            System.out.println(tbm.joker + ":" + tbm.code);
+            // System.out.println(tbm.joker + ":" + tbm.code);
+            if (tbm.joker > 0) {
+                continue;
+            }
+            if ((cnt++) % 5000 == 0) {
+                System.out.println(String.format("}private void init_%d(){", setn++));
+            }
+            System.out.println(String.format("addValue(%s,%d);", tbm.code, tbm.joker));
             // System.out.println(tbm.joker + "\t" + tbm.code);
         }
         System.out.println(name + ":" + list.size());
@@ -285,7 +309,7 @@ public class TblMaker {
                                     }
 
                                     for (int si = 0; si < seq.tile.length; si++) {
-                                        a[mm[i] + si] += 1;
+                                        a[mm[i] + si] += seq.tile[si];
                                     }
                                 }
                                 if (n > 0) {
